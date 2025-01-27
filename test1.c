@@ -1,4 +1,4 @@
-#include "pipex.h"
+#include "pipex.c"
 
 int main(int ac, char *av[], char **envp)
 {
@@ -35,7 +35,7 @@ int main(int ac, char *av[], char **envp)
                     {
 					    char *tmp = ft_strjoin(split_path[i], "/");
 					    char *cmd = ft_strjoin(tmp, split_av1[0]);
-                        printf("%s\n", cmd);
+                        // printf("%s\n", cmd);
 					    if (!access(cmd, F_OK | X_OK))
 						    execve(cmd, split_av1, envp);
                         i++;
@@ -50,6 +50,7 @@ int main(int ac, char *av[], char **envp)
         close(fd[1]);
         dup2(fd[0], STDIN_FILENO);
         close(fd[0]);
+
         char **res1 = envp;
         while (*res1)
         {

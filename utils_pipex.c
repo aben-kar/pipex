@@ -153,25 +153,22 @@ char	**ft_split(char const *s, char c)
 	}
 	return (prr);
 }
-char	*ft_strstr(char *str, char *to_find)
+char	*ft_strnstr(const char *str, const char *find, size_t n)
 {
-	int	i;
-	int	j;
+	size_t	i;
+	size_t	j;
 
-	j = 0;
-	if (to_find[j] == '\0')
-	{
-		return (str);
-	}
+	if (*find == '\0')
+		return ((char *)str);
 	i = 0;
-	while (str[i] != '\0')
+	while (str[i] && i < n)
 	{
 		j = 0;
-		while (str[i + j] == to_find[j] && str[i + j])
+		while (find[j] && str[i + j] == find[j] && (i + j) < n)
 			j++;
-		if (to_find[j] == '\0')
-			return (&str[i]);
+		if (find[j] == '\0')
+			return ((char *)(&str[i]));
 		i++;
 	}
-	return (0);
+	return (NULL);
 }

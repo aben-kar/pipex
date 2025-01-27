@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror
 NAME = pipex
 
 # Source files
-SRCS = pipex.c ft_strlen.c ft_calloc.c ft_memcpy.c ft_strjoin.c ft_split.c ft_strstr.c
+SRCS = pipex.c ft_strlen.c ft_calloc.c ft_memcpy.c ft_strjoin.c ft_split.c ft_strnstr.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
