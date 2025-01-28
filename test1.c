@@ -1,5 +1,5 @@
 #include "pipex.h"
-
+#include "libft/libft.h"
 int main(int ac, char **av, char **envp) {
     if (ac > 2) {
         char **split_av = ft_split(av[1], ' ');

@@ -1,3 +1,0 @@
-test line 1
-random line
-test line 2

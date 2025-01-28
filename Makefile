@@ -1,37 +1,28 @@
-# Compiler and flags
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
-
-# Target name
 NAME = pipex
 
-# Source files
-SRCS = pipex.c ft_strlen.c ft_calloc.c ft_memcpy.c ft_strjoin.c ft_split.c ft_strnstr.c
+CC = cc
 
-# Object files
-OBJS = $(SRCS:.c=.o)
+CFLAGS = -Werror -Wall -Wextra
 
-# Header files
-HEADER = pipex.h
+RM = rm -rf
 
-# Default rule
-all: $(NAME)
+SRCS = 	pipex.c\
+		libft/libft.a\
 
-# Build the executable
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
-# Compile source files into object files
-%.o: %.c $(HEADER)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(NAME) :
+	@make all -C libft
+	@gcc $(CFLAGS) $(SRCS) -o $(NAME)
 
-# Clean object files
-clean:
-	rm -f $(OBJS)
 
-# Clean all generated files
-fclean: clean
-	rm -f $(NAME)
+all : $(NAME)
 
-# Rebuild the project
-re: fclean all
+fclean : clean
+	$(RM) $(NAME)
+	@make fclean -C libft
+
+clean :
+	$(RM) $(NAME)
+	@make clean -C libft
+
+re : fclean all
