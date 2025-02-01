@@ -1,34 +1,49 @@
 #include "pipex.h"
 
-void execute_command(char **cmd, char **envp) { //31 line
-    if ((access(cmd[0], F_OK | X_OK)) == 0)
-        execve(cmd[0], cmd, envp);
-
-    char **res = envp;
-    while (*res) {
-        char *found = ft_strnstr(*res, "PATH=", 5);
-        if (found) {
+char **get_path_directories(char **envp) {
+    while (*envp) {
+        char *found = ft_strnstr(*envp, "PATH=", 5);
+        if(found)
+        {
             char **split_path = ft_split(found + 5, ':');
-            if (split_path) {
-                int i = 0;
-                while (split_path[i]) {
-                    char *tmp = ft_strjoin(split_path[i], "/");
-                    char *cmd_path = ft_strjoin(tmp, cmd[0]);
-                    free(tmp);
-                    if ((access(cmd_path, F_OK | X_OK)) == 0) {
-                        execve(cmd_path, cmd, envp);
-                        free(cmd_path);
-                        ft_free(split_path);
-                    }
-                    free(cmd_path);
-                    i++;
-                }
-            }
-            ft_free(split_path);
+            return (split_path);
         }
-        res++;
+        envp++;
+    }
+    return NULL;
+}
+
+char *find_executable_path(char *cmd, char **envp) {
+    if ((access(cmd, F_OK | X_OK)) == 0)
+        return cmd;
+    char **directories = get_path_directories(envp);
+    if (!directories)
+        return NULL;
+    int i = 0;
+    char *cmd_path = NULL;
+    while (directories[i]) {
+        char *tmp = ft_strjoin(directories[i], "/");
+        cmd_path = ft_strjoin(tmp, cmd);
+        free(tmp);
+        if ((access(cmd_path, F_OK | X_OK)) == 0) {
+            ft_free(directories);
+            return cmd_path;
+        }
+        free(cmd_path);
+        i++;
+    }
+    ft_free(directories);
+    return NULL;
+}
+
+void execute_command(char **cmd, char **envp) {
+    char *cmd_path = find_executable_path(cmd[0], envp);
+    if (cmd_path) {
+        execve(cmd_path, cmd, envp);
+        free(cmd_path);
     }
     write(2, "command not found\n", 18);
+    free(cmd_path);
     exit(1);
 }
 
@@ -71,11 +86,9 @@ int main(int ac, char **av, char **envp) { //34 line
         write(2, "Argument is empty!\n", 19);
         return 1;
     }
-    
     char **cmd1 = ft_split(av[2], ' ');
     char **cmd2 = ft_split(av[3], ' ');
     if (!cmd1 || !cmd2) return 1;
-    
     int fd[2];
     if (pipe(fd) == -1) return 1;
     

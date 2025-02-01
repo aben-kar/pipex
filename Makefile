@@ -1,28 +1,40 @@
+# Compiler and flags
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+
+# Path to libft and the static library
+LIBFT_DIR = ../libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+# Source files and object files
+SRC = pipex.c
+OBJ = $(SRC:.c=.o)
+
+# Output executable
 NAME = pipex
 
-CC = cc
+# Default target (build the program)
+all: $(NAME)
 
-CFLAGS = -Werror -Wall -Wextra
+# Build the program
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT)
 
-RM = rm -rf
+# Compile the object files
+%.o: %.c
+	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
 
-SRCS = 	pipex.c\
-		libft/libft.a\
+# Clean object files
+clean:
+	rm -f $(OBJ)
 
+# Clean everything (including libft.a if needed)
+fclean: clean
+	rm -f $(NAME)
 
-$(NAME) :
-	@make all -C libft
-	@gcc $(CFLAGS) $(SRCS) -o $(NAME)
+# Rebuild everything
+re: fclean all
 
-
-all : $(NAME)
-
-fclean : clean
-	$(RM) $(NAME)
-	@make fclean -C libft
-
-clean :
-	$(RM) $(NAME)
-	@make clean -C libft
-
-re : fclean all
+# Dependencies (in case you need specific build order)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
