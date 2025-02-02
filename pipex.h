@@ -1,7 +1,6 @@
 #ifndef PIPEX_H
 #define PIPEX_H
 
-// # include "../libft/libft.a"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,13 +9,15 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-
-// size_t	ft_strlen(const char *s);
-// void	*ft_calloc(size_t count, size_t size);
-// void	*ft_memcpy(void *dst, const void *src, size_t n);
-// char	*ft_strjoin(char const *s1, char const *s2);
-// char	**ft_split(char const *s, char c);
-// char	*ft_strnstr(const char *str, const char *find, size_t n);
-// void	*ft_free(char **prr);
+int	count_word(char const *s1, char sp);
+char	*ft_strsdup(char const *s, size_t *j, char sp);
+void	*ft_free(char **prr);
+char	**ft_split(char const *s, char c);
+char **get_path_directories(char **envp);
+size_t	ft_strlen(const char *s);
+void	*ft_calloc(size_t count, size_t size);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strnstr(const char *str, const char *find, size_t n);
 
 #endif

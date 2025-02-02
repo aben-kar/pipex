@@ -1,18 +1,5 @@
 #include "pipex.h"
 
-char **get_path_directories(char **envp) {
-    while (*envp) {
-        char *found = ft_strnstr(*envp, "PATH=", 5);
-        if(found)
-        {
-            char **split_path = ft_split(found + 5, ':');
-            return (split_path);
-        }
-        envp++;
-    }
-    return NULL;
-}
-
 char *find_executable_path(char *cmd, char **envp) {
     if ((access(cmd, F_OK | X_OK)) == 0)
         return cmd;
@@ -40,8 +27,8 @@ void execute_command(char **cmd, char **envp) {
     char *cmd_path = find_executable_path(cmd[0], envp);
     if (cmd_path) {
         execve(cmd_path, cmd, envp);
-        free(cmd_path);
     }
+
     write(2, "command not found\n", 18);
     free(cmd_path);
     exit(1);
@@ -77,7 +64,7 @@ void child_process_2(int *fd, char *output_file, char **cmd, char **envp) {
     ft_free(cmd);
 }
 
-int main(int ac, char **av, char **envp) { //34 line
+int main(int ac, char **av, char **envp) {
     if (ac != 5) {
         write(2, "Failed arguments!\n", 18);
         return 1;
@@ -92,11 +79,11 @@ int main(int ac, char **av, char **envp) { //34 line
     int fd[2];
     if (pipe(fd) == -1) return 1;
     
-    int id1 = fork();
+    pid_t id1 = fork();
     if (id1 == 0)
         child_process_1(fd, av[1], cmd1, envp);
     
-    int id2 = fork();
+    pid_t id2 = fork();
     if (id2 == 0)
         child_process_2(fd, av[4], cmd2, envp);
     
