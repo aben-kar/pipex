@@ -1,17 +1,35 @@
 #include "pipex.h"
 
 char *find_executable_path(char *cmd, char **envp) {
+    char **directories = NULL;
+    char *cmd_path = NULL;
+
+    if (!cmd || !*cmd) {
+        write(2, "Error: Empty command\n", 21);
+        return NULL;
+    }
+
     if ((access(cmd, F_OK | X_OK)) == 0)
-        return cmd;
-    char **directories = get_path_directories(envp);
+        return (free(cmd), NULL);
+    
+
+    directories = get_path_directories(envp);
     if (!directories)
         return NULL;
+
     int i = 0;
-    char *cmd_path = NULL;
     while (directories[i]) {
         char *tmp = ft_strjoin(directories[i], "/");
+        if (!tmp) {
+            ft_free(directories);
+            return NULL;
+        }
         cmd_path = ft_strjoin(tmp, cmd);
         free(tmp);
+        if (!cmd_path) {
+            ft_free(directories);
+            return NULL;
+        }
         if ((access(cmd_path, F_OK | X_OK)) == 0) {
             ft_free(directories);
             return cmd_path;
@@ -24,13 +42,18 @@ char *find_executable_path(char *cmd, char **envp) {
 }
 
 void execute_command(char **cmd, char **envp) {
-    char *cmd_path = find_executable_path(cmd[0], envp);
+    char *cmd_path = NULL;
+    if (!cmd || !cmd[0]) {
+        write(2, "command not found\n", 18);
+        exit(1);
+    }
+    cmd_path = find_executable_path(cmd[0], envp);
     if (cmd_path) {
         execve(cmd_path, cmd, envp);
+        free(cmd_path);
     }
 
     write(2, "command not found\n", 18);
-    free(cmd_path);
     exit(1);
 }
 
@@ -46,7 +69,6 @@ void child_process_1(int *fd, char *input_file, char **cmd, char **envp) {
     dup2(fd[1], 1);
     close(fd[1]);
     execute_command(cmd, envp);
-    ft_free(cmd);
 }
 
 void child_process_2(int *fd, char *output_file, char **cmd, char **envp) {
@@ -61,7 +83,6 @@ void child_process_2(int *fd, char *output_file, char **cmd, char **envp) {
     dup2(out_file, 1);
     close(out_file);
     execute_command(cmd, envp);
-    ft_free(cmd);
 }
 
 int main(int ac, char **av, char **envp) {
@@ -75,9 +96,11 @@ int main(int ac, char **av, char **envp) {
     }
     char **cmd1 = ft_split(av[2], ' ');
     char **cmd2 = ft_split(av[3], ' ');
-    if (!cmd1 || !cmd2) return 1;
+    if (!cmd1 || !cmd2) 
+        return (ft_free(cmd1), ft_free(cmd2), 1);
     int fd[2];
-    if (pipe(fd) == -1) return 1;
+    if (pipe(fd) == -1)
+        return (ft_free(cmd1), ft_free(cmd2), 1);
     
     pid_t id1 = fork();
     if (id1 == 0)
@@ -89,8 +112,9 @@ int main(int ac, char **av, char **envp) {
     
     close(fd[0]);
     close(fd[1]);
-    wait(NULL);
-    wait(NULL);
+
+    waitpid(id1, NULL, 0);
+    waitpid(id2, NULL, 0);
     
     ft_free(cmd1);
     ft_free(cmd2);

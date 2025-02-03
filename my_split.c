@@ -50,48 +50,52 @@ void	*ft_free(char **prr)
 	int	i;
 
 	i = 0;
-	while (prr[i])
+	while (prr && prr[i])
 	{
 		free(prr[i]);
 		i++;
 	}
-	free(prr);
+	if (prr)
+		free(prr);
 	return (NULL);
 }
 
-char	**ft_split(char const *s, char c)
-{
-	size_t	j;
-	size_t	i;
-	char	**prr;
-	size_t	len_word;
+char **ft_split(char const *s, char c) {
+    size_t j = 0;
+    size_t i = 0;
+    char **prr = NULL;
+    size_t len_word = count_word(s, c);
 
-	i = 0;
-	j = 0;
-	if (!s)
-		return (NULL);
-	len_word = count_word(s, c);
-	prr = (char **)ft_calloc((len_word + 1), sizeof(char *));
-	if (prr == NULL)
-		return (NULL);
-	while (j < len_word)
-	{
-		while (s[i] == c && s[i])
-			i++;
-		prr[j] = ft_strsdup(s, &i, c);
-		if (!prr[j])
-			return (ft_free(prr));
-		j++;
-	}
-	return (prr);
+    if (!s || !len_word)
+        return NULL;
+
+    prr = (char **)ft_calloc((len_word + 1), sizeof(char *));
+    if (prr == NULL)
+        return NULL;
+
+    while (j < len_word) {
+        while (s[i] == c && s[i])
+            i++;
+        if (s[i]) {
+            prr[j] = ft_strsdup(s, &i, c);
+            if (!prr[j]) {
+                ft_free(prr);
+                return NULL;
+            }
+        }
+        j++;
+    }
+    return prr;
 }
+
 char **get_path_directories(char **envp) {
     while (*envp) {
         char *found = ft_strnstr(*envp, "PATH=", 5);
-        if(found)
-        {
+        if (found) {
             char **split_path = ft_split(found + 5, ':');
-            return (split_path);
+            if (!split_path)
+                return NULL;
+            return split_path;
         }
         envp++;
     }

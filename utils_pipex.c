@@ -16,12 +16,12 @@ void	*ft_calloc(size_t count, size_t size)
 	unsigned char	*s;
 	size_t			i;
 
-	i = 0;
 	if (size != 0 && (count > SIZE_MAX / size))
 		return (NULL);
 	s = (unsigned char *)malloc(count * size);
 	if (s == NULL)
 		return (NULL);
+	i = 0;
 	while (i < count * size)
 	{
 		s[i] = 0;
