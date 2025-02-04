@@ -18,7 +18,7 @@ void pipex_process(char **av, char **envp) {
     }
 
     pid_t id1 = -1;
-    if (cmd1 && cmd1[0]) {  // Only fork if cmd1 is valid
+    if (cmd1 && cmd1[0]) {
         id1 = fork();
         if (id1 < 0) {
             perror("fork");
@@ -27,7 +27,7 @@ void pipex_process(char **av, char **envp) {
             exit(1);
         }
         if (id1 == 0)
-            child_process_1(fd, av[1], cmd1, cmd2, envp);
+            child_process_1(fd, av[1], cmd1, envp);
     }
 
     pid_t id2 = fork();
@@ -38,12 +38,13 @@ void pipex_process(char **av, char **envp) {
         exit(1);
     }
     if (id2 == 0)
-        child_process_2(fd, av[4], cmd2, cmd1, envp);
+        child_process_2(fd, av[4], cmd2, envp);
 
     close(fd[0]);
     close(fd[1]);
 
-    if (id1 > 0) waitpid(id1, NULL, 0);  // Wait only if forked
+    if (id1 > 0) 
+        waitpid(id1, NULL, 0);
     waitpid(id2, NULL, 0);
 
     ft_free(cmd1);

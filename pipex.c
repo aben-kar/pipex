@@ -28,7 +28,7 @@ char *find_executable_path(char *cmd, char **envp) {
     return NULL;
 }
 
-void execute_command(char **cmd, char **cmd2, char **envp) {
+void execute_command(char **cmd, char **envp) {
     char *cmd_path;
 
     cmd_path = find_executable_path(cmd[0], envp);
@@ -37,17 +37,15 @@ void execute_command(char **cmd, char **cmd2, char **envp) {
         perror("execve");
         free(cmd_path);
         ft_free(cmd);
-        ft_free(cmd2);
         exit(1);
     }
 }
 
-void child_process_1(int *fd, char *input_file, char **cmd,char **cmd2, char **envp) {
+void child_process_1(int *fd, char *input_file, char **cmd, char **envp) {
     int in_file = open(input_file, O_RDONLY);
     if (in_file == -1) {
         perror("open");
-        ft_free(cmd);
-        ft_free(cmd2);        
+        ft_free(cmd);       
         exit(1);
     }
     close(fd[0]);
@@ -55,14 +53,13 @@ void child_process_1(int *fd, char *input_file, char **cmd,char **cmd2, char **e
     close(in_file);
     dup2(fd[1], 1);
     close(fd[1]);
-    execute_command(cmd, cmd2, envp);
+    execute_command(cmd, envp);
 }
 
-void child_process_2(int *fd, char *output_file, char **cmd2, char **cmd, char **envp) {
+void child_process_2(int *fd, char *output_file, char **cmd2, char **envp) {
     int out_file = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (out_file == -1) {
         perror("open");
-        ft_free(cmd);
         ft_free(cmd2);        
         exit(1);
     }
@@ -71,7 +68,7 @@ void child_process_2(int *fd, char *output_file, char **cmd2, char **cmd, char *
     close(fd[0]);
     dup2(out_file, 1);
     close(out_file);
-    execute_command(cmd2, cmd, envp);
+    execute_command(cmd2, envp);
 }
 
 int main(int ac, char **av, char **envp) {
@@ -81,7 +78,6 @@ int main(int ac, char **av, char **envp) {
     }
     if (!*av[1] || !*av[2] || !*av[3] || !*av[4]) {
         write(2, "Argument is empty!\n", 19);
-        // return 1;
     }
     pipex_process(av, envp);
     return 0;
