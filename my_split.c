@@ -61,18 +61,18 @@ void	*ft_free(char **prr)
 }
 
 char **ft_split(char const *s, char c) {
-    size_t j = 0;
-    size_t i = 0;
-    char **prr = NULL;
-    size_t len_word = count_word(s, c);
+    size_t j;
+    size_t i;
 
+	j = 0;
+	i = 0;
+    char **prr;
+    size_t len_word = count_word(s, c);
     if (!s || !len_word)
         return NULL;
-
     prr = (char **)ft_calloc((len_word + 1), sizeof(char *));
     if (prr == NULL)
         return NULL;
-
     while (j < len_word) {
         while (s[i] == c && s[i])
             i++;
@@ -94,10 +94,10 @@ char **get_path_directories(char **envp) {
         if (found) {
             char **split_path = ft_split(found + 5, ':');
             if (!split_path)
-                return NULL;
+                return (NULL);
             return split_path;
         }
         envp++;
     }
-    return NULL;
+    return (NULL);
 }
