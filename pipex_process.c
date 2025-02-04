@@ -1,8 +1,22 @@
 #include "pipex.h"
 
+char **get_path_directories(char **envp) {
+    while (*envp) {
+        char *found = ft_strnstr(*envp, "PATH=", 5);
+        if (found) {
+            char **split_path = ft_split(found + 5, ":");
+            if (!split_path)
+                return (NULL);
+            return split_path;
+        }
+        envp++;
+    }
+    return (NULL);
+}
+
 void pipex_process(char **av, char **envp) {
-    char **cmd1 = ft_split(av[2], ' ');
-    char **cmd2 = ft_split(av[3], ' ');
+    char **cmd1 = ft_split(av[2], " \t");
+    char **cmd2 = ft_split(av[3], " \t");
 
     if (!cmd2) {
         ft_free(cmd1);

@@ -20,10 +20,11 @@ typedef struct myvariable {
     pid_t id2;
 }t_myvariable;
 
-int	count_word(char const *s1, char sp);
-char	*ft_strsdup(char const *s, size_t *j, char sp);
+int is_separator(char c, char *separators);
+int	count_word(char const *s1, char *sp);
+char	*ft_strsdup(char const *s, size_t *j, char *sp);
 void	ft_free(char **prr);
-char	**ft_split(char const *s, char c);
+char **ft_split(char const *s, char *c);
 char **get_path_directories(char **envp);
 size_t	ft_strlen(const char *s);
 void	*ft_calloc(size_t count, size_t size);
