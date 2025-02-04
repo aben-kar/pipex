@@ -1,0 +1,32 @@
+#include "pipex.h"
+
+void pipex_process(char **av, char **envp) {
+    struct myvariable s;
+    int fd[2];
+
+    s.cmd1 = ft_split(av[2], ' ');
+    s.cmd2 = ft_split(av[3], ' ');
+
+    if (!s.cmd2 || pipe(fd) == -1)
+        return (perror("error"), ft_free(s.cmd1), ft_free(s.cmd2), exit(1));
+    s.id1 = fork();
+    if (s.cmd1 && s.cmd1[0]) {
+        s.id1 = fork();
+        if (s.id1 < 0) 
+            return (perror("fork"), ft_free(s.cmd1), ft_free(s.cmd2), exit(1));
+        if (s.id1 == 0) 
+            child_process_1(fd, av[1], s.cmd1, s.cmd2, envp);
+    }
+    s.id2 = fork();
+    if (s.id2 < 0)
+        return (perror("fork"), ft_free(s.cmd1), ft_free(s.cmd2), exit(1));
+    if (s.id2 == 0)
+        child_process_2(fd, av[4], s.cmd2, s.cmd1, envp);
+
+    close(fd[0]);
+    close(fd[1]);
+    waitpid(s.id1, NULL, 0);
+    waitpid(s.id2, NULL, 0);
+    ft_free(s.cmd1);
+    ft_free(s.cmd2);
+}

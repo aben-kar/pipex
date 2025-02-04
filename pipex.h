@@ -9,6 +9,17 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+typedef struct myvariable {
+    int i;
+    char **directories;
+    char *cmd_path;
+    char *tmp;
+    char **cmd1;
+    char **cmd2;
+    pid_t id1;
+    pid_t id2;
+}t_myvariable;
+
 int	count_word(char const *s1, char sp);
 char	*ft_strsdup(char const *s, size_t *j, char sp);
 void	*ft_free(char **prr);

@@ -1,33 +1,30 @@
 #include "pipex.h"
 
 char *find_executable_path(char *cmd, char **envp) {
-    int i;
-    char **directories;
-    char *cmd_path;
-    char *tmp;
+    struct myvariable vr;
 
     if ((access(cmd, F_OK | X_OK)) == 0)
         return (cmd); 
-    directories = get_path_directories(envp);
-    if (!directories)
+    vr.directories = get_path_directories(envp);
+    if (!vr.directories)
         return NULL;
-    i = 0;
-    while (directories[i]) {
-        tmp = ft_strjoin(directories[i], "/");
-        if (!tmp)
-            return ft_free(directories);
-        cmd_path = ft_strjoin(tmp, cmd);
-        free(tmp);
-        if (!cmd_path)
-            return ft_free(directories);
-        if ((access(cmd_path, F_OK | X_OK)) == 0) {
-            ft_free(directories);
-            return cmd_path;
+    vr.i = 0;
+    while (vr.directories[vr.i]) {
+        vr.tmp = ft_strjoin(vr.directories[vr.i], "/");
+        if (!vr.tmp)
+            return ft_free(vr.directories);
+        vr.cmd_path = ft_strjoin(vr.tmp, cmd);
+        free(vr.tmp);
+        if (!vr.cmd_path)
+            return ft_free(vr.directories);
+        if ((access(vr.cmd_path, F_OK | X_OK)) == 0) {
+            ft_free(vr.directories);
+            return vr.cmd_path;
         }
-        free(cmd_path);
-        i++;
+        free(vr.cmd_path);
+        vr.i++;
     }
-    ft_free(directories);
+    ft_free(vr.directories);
     return NULL;
 }
 
@@ -45,8 +42,8 @@ void execute_command(char **cmd, char **cmd2, char **envp) {
     }
 }
 
-void child_process_1(int *fd, char *input_file, char **cmd, char **cmd2, char **envp) {
-    int in_file = open(input_file, O_RDONLY | O_CREAT, 0644);
+void child_process_1(int *fd, char *input_file, char **cmd,char **cmd2, char **envp) {
+    int in_file = open(input_file, O_RDONLY);
     if (in_file == -1) {
         perror("open");
         ft_free(cmd);
