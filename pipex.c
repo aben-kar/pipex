@@ -12,11 +12,11 @@ char *find_executable_path(char *cmd, char **envp) {
     while (vr.directories[vr.i]) {
         vr.tmp = ft_strjoin(vr.directories[vr.i], "/");
         if (!vr.tmp)
-            return ft_free(vr.directories);
+            ft_free(vr.directories);
         vr.cmd_path = ft_strjoin(vr.tmp, cmd);
         free(vr.tmp);
         if (!vr.cmd_path)
-            return ft_free(vr.directories);
+            ft_free(vr.directories);
         if ((access(vr.cmd_path, F_OK | X_OK)) == 0) {
             ft_free(vr.directories);
             return vr.cmd_path;
@@ -50,9 +50,9 @@ void child_process_1(int *fd, char *input_file, char **cmd,char **cmd2, char **e
         ft_free(cmd2);        
         exit(1);
     }
+    close(fd[0]);
     dup2(in_file, 0);
     close(in_file);
-    close(fd[0]);
     dup2(fd[1], 1);
     close(fd[1]);
     execute_command(cmd, cmd2, envp);
@@ -81,7 +81,7 @@ int main(int ac, char **av, char **envp) {
     }
     if (!*av[1] || !*av[2] || !*av[3] || !*av[4]) {
         write(2, "Argument is empty!\n", 19);
-        return 1;
+        // return 1;
     }
     pipex_process(av, envp);
     return 0;

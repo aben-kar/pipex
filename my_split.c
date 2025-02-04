@@ -45,7 +45,7 @@ char	*ft_strsdup(char const *s, size_t *j, char sp)
 	return (result);
 }
 
-void	*ft_free(char **prr)
+void	ft_free(char **prr)
 {
 	int	i;
 
@@ -57,7 +57,6 @@ void	*ft_free(char **prr)
 	}
 	if (prr)
 		free(prr);
-	return (NULL);
 }
 
 char **ft_split(char const *s, char c) {

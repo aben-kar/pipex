@@ -1,0 +1,15 @@
+a.out
+Makefile
+my_split.c
+my_split.o
+out
+pipex
+pipex.c
+pipex.h
+pipex.o
+pipex_process.c
+pipex_process.o
+test
+test1
+utils_pipex.c
+utils_pipex.o
