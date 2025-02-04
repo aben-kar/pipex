@@ -14,53 +14,50 @@ char **get_path_directories(char **envp) {
     return (NULL);
 }
 
-void pipex_process(char **av, char **envp) {
-    char **cmd1 = ft_split(av[2], " \t");
-    char **cmd2 = ft_split(av[3], " \t");
+void handle_error(const char *msg, int exit_code) {
+    perror(msg);
+    exit(exit_code);
+}
 
-    if (!cmd2) {
-        ft_free(cmd1);
-        exit(1);
-    }
+char **split_arguments(char *arg) {
+    return ft_split(arg, " \t");
+}
 
-    int fd[2];
+void create_pipe(int *fd, char **cmd1, char **cmd2) {
     if (pipe(fd) == -1) {
-        perror("pipe");
+        handle_error("pipe failed", 1);
         ft_free(cmd1);
         ft_free(cmd2);
         exit(1);
     }
+}
 
-    pid_t id1 = -1;
-    if (cmd1 && cmd1[0]) {
-        id1 = fork();
-        if (id1 < 0) {
-            perror("fork");
-            ft_free(cmd1);
-            ft_free(cmd2);
+void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) { //27 line
+    t_myvariable i;
+
+    if (pipex->cmd1 && pipex->cmd1[0]) {
+        i.id1 = fork();
+        if (i.id1 < 0) {
+            handle_error("fork failed", 1);
+            ft_free(pipex->cmd1);
+            ft_free(pipex->cmd2);
             exit(1);
         }
-        if (id1 == 0)
-            child_process_1(fd, av[1], cmd1, envp);
+        if (i.id1 == 0)
+            child_process_1(fd, av[1], pipex->cmd1, envp);
     }
-
-    pid_t id2 = fork();
-    if (id2 < 0) {
-        perror("fork");
-        ft_free(cmd1);
-        ft_free(cmd2);
+    i.id2 = fork();
+    if (i.id2 < 0) {
+        handle_error("fork failed", 1);
+        ft_free(pipex->cmd1);
+        ft_free(pipex->cmd2);
         exit(1);
     }
-    if (id2 == 0)
-        child_process_2(fd, av[4], cmd2, envp);
-
+    if (i.id2 == 0)
+        child_process_2(fd, av[4], pipex->cmd2, envp);
     close(fd[0]);
     close(fd[1]);
-
-    if (id1 > 0) 
-        waitpid(id1, NULL, 0);
-    waitpid(id2, NULL, 0);
-
-    ft_free(cmd1);
-    ft_free(cmd2);
+    if (i.id1 > 0) 
+        waitpid(i.id1, NULL, 0);
+    waitpid(i.id2, NULL, 0);
 }

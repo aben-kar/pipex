@@ -1,22 +1,22 @@
 #include "pipex.h"
 
-char *find_executable_path(char *cmd, char **envp) {
+char *find_executable_path(char *cmd, char **envp) { //26 line
     struct myvariable vr;
 
     if ((access(cmd, F_OK | X_OK)) == 0)
         return (cmd); 
     vr.directories = get_path_directories(envp);
     if (!vr.directories)
-        return NULL;
+        handle_error("PATH not found", 1);
     vr.i = 0;
     while (vr.directories[vr.i]) {
         vr.tmp = ft_strjoin(vr.directories[vr.i], "/");
         if (!vr.tmp)
-            ft_free(vr.directories);
+            handle_error("ft_strjoin failed", 1);
         vr.cmd_path = ft_strjoin(vr.tmp, cmd);
         free(vr.tmp);
         if (!vr.cmd_path)
-            ft_free(vr.directories);
+            handle_error("ft_strjoin failed", 1);
         if ((access(vr.cmd_path, F_OK | X_OK)) == 0) {
             ft_free(vr.directories);
             return vr.cmd_path;
@@ -25,6 +25,7 @@ char *find_executable_path(char *cmd, char **envp) {
         vr.i++;
     }
     ft_free(vr.directories);
+    handle_error("Command not found", 127);
     return NULL;
 }
 
@@ -34,7 +35,7 @@ void execute_command(char **cmd, char **envp) {
     cmd_path = find_executable_path(cmd[0], envp);
     if (cmd_path) {
         execve(cmd_path, cmd, envp);
-        perror("execve");
+        handle_error("execve failed", 1);
         free(cmd_path);
         ft_free(cmd);
         exit(1);
@@ -44,7 +45,7 @@ void execute_command(char **cmd, char **envp) {
 void child_process_1(int *fd, char *input_file, char **cmd, char **envp) {
     int in_file = open(input_file, O_RDONLY);
     if (in_file == -1) {
-        perror("open");
+        handle_error("open failed", 1);
         ft_free(cmd);       
         exit(1);
     }
@@ -59,7 +60,7 @@ void child_process_1(int *fd, char *input_file, char **cmd, char **envp) {
 void child_process_2(int *fd, char *output_file, char **cmd2, char **envp) {
     int out_file = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (out_file == -1) {
-        perror("open");
+        handle_error("open failed", 1);
         ft_free(cmd2);        
         exit(1);
     }
@@ -71,14 +72,32 @@ void child_process_2(int *fd, char *output_file, char **cmd2, char **envp) {
     execute_command(cmd2, envp);
 }
 
+
 int main(int ac, char **av, char **envp) {
+    t_myvariable pipex;
+
     if (ac != 5) {
-        write(2, "Failed arguments!\n", 18);
+        handle_error("Failed arguments!", 1);
         return 1;
     }
     if (!*av[1] || !*av[2] || !*av[3] || !*av[4]) {
-        write(2, "Argument is empty!\n", 19);
+        handle_error("Argument is empty!", 1);
     }
-    pipex_process(av, envp);
+
+    pipex.cmd1 = split_arguments(av[2]);
+    pipex.cmd2 = split_arguments(av[3]);
+
+    if (!pipex.cmd2) {
+        ft_free(pipex.cmd1);
+        handle_error("split_arguments failed", 1);
+    }
+
+    int fd[2];
+    create_pipe(fd, pipex.cmd1, pipex.cmd2);
+    create_forks(fd, av, &pipex, envp);
+
+    ft_free(pipex.cmd1);
+    ft_free(pipex.cmd2);
+    
     return 0;
 }
