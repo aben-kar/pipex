@@ -1,9 +1,9 @@
 NAME = pipex
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3
 
-SRC = pipex.c utils_pipex.c my_split.c pipex_process.c
+SRC = pipex.c utils_pipex.c my_split.c utils_pipex1.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)

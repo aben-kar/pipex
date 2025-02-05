@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acben-ka <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:44 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/04 23:07:46 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/05 22:37:06 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,13 @@ char **ft_split(char const *s, char *c);
 char **get_path_directories(char **envp);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strnstr(const char *str, const char *find, size_t n);
-void pipex_process(char **av, char **envp);
-void child_process_1(int *fd, char *input_file, char **cmd, char **envp);
-void child_process_2(int *fd, char *output_file, char **cmd2, char **envp);
+void	ft_perror(char *err);
+void child_process_1(int *fd, char *input_file, t_myvariable *pipex, char **envp);
+void child_process_2(int *fd, char *output_file, t_myvariable *pipex, char **envp);
 char **split_arguments(char *arg);
 void create_pipe(int *fd, char **cmd1, char **cmd2);
 void create_forks(int *fd, char **av,t_myvariable *pipex, char **envp);
-void handle_error(const char *msg, int exit_code);
+char *find_executable_path(char *cmd, char **envp);
+
+
 #endif
