@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:25 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 22:14:09 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 22:19:48 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,7 @@ void child_process_1(int *fd, char *input_file, t_myvariable *pipex, char **envp
     dup2(fd[1], 1);
     close(in_file);
     close(fd[1]);
-    if (pipex->cmd1 && pipex->cmd1[0])
-    {
+    if (pipex->cmd1 && pipex->cmd1[0]) {
         execute_command(pipex , envp, 1);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
@@ -95,6 +94,7 @@ void child_process_2(int *fd, char *output_file, t_myvariable *pipex, char **env
     int out_file = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (out_file == -1) {
         write(2, "Failed to open output file.\n", 28);
+        close(fd[0]);
         close(fd[1]);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);        
@@ -105,8 +105,7 @@ void child_process_2(int *fd, char *output_file, t_myvariable *pipex, char **env
     close(fd[0]);
     dup2(out_file, 1);
     close(out_file);
-    if(pipex->cmd2 && pipex->cmd2[0])
-    {
+    if(pipex->cmd2 && pipex->cmd2[0]) {
         execute_command(pipex , envp, 0);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);       
@@ -117,8 +116,7 @@ void child_process_2(int *fd, char *output_file, t_myvariable *pipex, char **env
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2); 
         exit(1);
-    }
-        
+    }    
 }
 
 

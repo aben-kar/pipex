@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:59 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 22:12:49 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 22:21:20 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,33 +48,29 @@ void create_pipe(int *fd, char **cmd1, char **cmd2) {
 }
 
 void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) {
-    t_myvariable i;
-
-    i.id1 = fork();
-    if (i.id1 < 0) {
+    pipex->id1 = fork();
+    if (pipex->id1 < 0) {
         close(fd[0]);
         close(fd[1]);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
         ft_perror("fork");
     }
-    if (i.id1 == 0)
+    if (pipex->id1 == 0)
         child_process_1(fd, av[1], pipex, envp);
     
-    i.id2 = fork();
-    if (i.id2 < 0) {
+    pipex->id2 = fork();
+    if (pipex->id2 < 0) {
         close(fd[0]);
         close(fd[1]);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
         ft_perror("fork");
     }   
-    if (i.id2 == 0)
-        child_process_2(fd, av[4], pipex, envp);
-        
+    if (pipex->id2 == 0)
+        child_process_2(fd, av[4], pipex, envp);  
     close(fd[0]);
     close(fd[1]);
-
-    waitpid(i.id1, NULL, 0);
-    waitpid(i.id2, NULL, 0);
+    waitpid(pipex->id1, NULL, 0);
+    waitpid(pipex->id2, NULL, 0);
 }
