@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:25 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 00:10:49 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 01:02:08 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,13 @@ char *find_executable_path(char *cmd, char **envp) {
     t_myvariable s;
 
     if ((access(cmd, F_OK | X_OK)) == 0)
-        return (cmd); 
+        return (cmd);
+    else
+    {
+        ft_perror("access");
+        exit(1);
+    }
+    
     s.directories = get_path_directories(envp);
     if (!s.directories){
         write(2, "PATH not found in environment.\n", 31);
@@ -35,7 +41,8 @@ char *find_executable_path(char *cmd, char **envp) {
         s.i++;
     }
     ft_free(s.directories);
-    write(2, "Command not found.\n", 19);
+    // ft_perror("access");
+    // write(2, "Command not found.\n", 19);
     return NULL;
 }
 
@@ -96,16 +103,17 @@ int main(int ac, char **av, char **envp) {
         return 1;
     }
         
-    if (!*av[1] || !*av[2] || !*av[3] || !*av[4]) {
-        write (2, "Permission denied.\n", 19);
-    }
+    // if (!*av[1] || !*av[2] || !*av[3] || !*av[4]) {
+    //     write(2, "Command not foundl.\n", 20);
+    // }
         
     s.cmd1 = split_arguments(av[2]);
     s.cmd2 = split_arguments(av[3]);
 
     if (!s.cmd2) {
         ft_free(s.cmd1);
-        exit(1);
+        write(2, "Command not foundl.\n", 20);
+        exit(111);
     }
 
     int fd[2];

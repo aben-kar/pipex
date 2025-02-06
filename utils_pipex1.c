@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:59 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 00:27:06 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 00:48:36 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,29 +51,31 @@ void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) {
     i.id1 = -1;
     if (pipex->cmd1 && pipex->cmd1[0]) {
         i.id1 = fork();
-        if (i.id1 == 0) {
-            child_process_1(fd, av[1], pipex, envp);
-        }
         if (i.id1 < 0) {
             ft_perror("fork");
             ft_free(pipex->cmd1);
             ft_free(pipex->cmd2);
             exit(1);
         }
+        if (i.id1 == 0) {
+            child_process_1(fd, av[1], pipex, envp);
+        }
     }
     else{
-        write(2, "Command not found.\n", 19);
+        write(2, "Command not foundddd.\n", 22);
     }
     
     i.id2 = fork();
-    if (i.id2 == 0)
-        child_process_2(fd, av[4], pipex, envp);
     if (i.id2 < 0) {
         ft_perror("fork");
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
         exit(1);
     }   
+    if (i.id2 == 0)
+    {
+        child_process_2(fd, av[4], pipex, envp);
+    }
         
     close(fd[0]);
     close(fd[1]);
