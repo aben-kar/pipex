@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:59 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 17:07:22 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 22:12:49 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) {
 
     i.id1 = fork();
     if (i.id1 < 0) {
+        close(fd[0]);
+        close(fd[1]);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
         ft_perror("fork");
@@ -61,6 +63,8 @@ void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) {
     
     i.id2 = fork();
     if (i.id2 < 0) {
+        close(fd[0]);
+        close(fd[1]);
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
         ft_perror("fork");
