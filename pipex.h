@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:44 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/05 22:37:06 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 15:21:58 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char **split_arguments(char *arg);
 void create_pipe(int *fd, char **cmd1, char **cmd2);
 void create_forks(int *fd, char **av,t_myvariable *pipex, char **envp);
 char *find_executable_path(char *cmd, char **envp);
+int	count_word(char const *s1, char *sp);
 
 
 #endif

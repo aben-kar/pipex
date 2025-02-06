@@ -6,7 +6,7 @@
 /*   By: acben-ka <acben-ka@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 23:07:59 by acben-ka          #+#    #+#             */
-/*   Updated: 2025/02/06 00:48:36 by acben-ka         ###   ########.fr       */
+/*   Updated: 2025/02/06 17:07:22 by acben-ka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,53 +29,44 @@ char **get_path_directories(char **envp) {
 void	ft_perror(char *err)
 {
 	perror(err);
-	// exit(1);
+	exit(1);
 }
 
 char **split_arguments(char *arg) {
-    return ft_split(arg, " \t");
+    char **splitted = ft_split(arg, " \t");
+    if (!splitted)
+        return (NULL);
+    return splitted;
 }
 
 void create_pipe(int *fd, char **cmd1, char **cmd2) {
     if (pipe(fd) == -1) {
-        ft_perror("pipe");
         ft_free(cmd1);
         ft_free(cmd2);
-        exit(1);
+        ft_perror("pipe");
     }
 }
 
 void create_forks(int *fd, char **av, t_myvariable *pipex, char **envp) {
     t_myvariable i;
 
-    i.id1 = -1;
-    if (pipex->cmd1 && pipex->cmd1[0]) {
-        i.id1 = fork();
-        if (i.id1 < 0) {
-            ft_perror("fork");
-            ft_free(pipex->cmd1);
-            ft_free(pipex->cmd2);
-            exit(1);
-        }
-        if (i.id1 == 0) {
-            child_process_1(fd, av[1], pipex, envp);
-        }
+    i.id1 = fork();
+    if (i.id1 < 0) {
+        ft_free(pipex->cmd1);
+        ft_free(pipex->cmd2);
+        ft_perror("fork");
     }
-    else{
-        write(2, "Command not foundddd.\n", 22);
-    }
+    if (i.id1 == 0)
+        child_process_1(fd, av[1], pipex, envp);
     
     i.id2 = fork();
     if (i.id2 < 0) {
-        ft_perror("fork");
         ft_free(pipex->cmd1);
         ft_free(pipex->cmd2);
-        exit(1);
+        ft_perror("fork");
     }   
     if (i.id2 == 0)
-    {
         child_process_2(fd, av[4], pipex, envp);
-    }
         
     close(fd[0]);
     close(fd[1]);
